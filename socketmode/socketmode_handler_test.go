@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/slack-go/slack"
-	"github.com/slack-go/slack/slackevents"
+	"github.com/TailrecIO/slack"
+	"github.com/TailrecIO/slack/slackevents"
 )
 
 func init_SocketmodeHandler() *SocketmodeHandler {
