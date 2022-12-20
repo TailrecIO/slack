@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -102,11 +103,45 @@ func (api *Client) DeleteMessageContext(ctx context.Context, channel, messageTim
 	return respChannel, respTimestamp, err
 }
 
+func (api *Client) SendScheduledMessageContext(ctx context.Context, channelID string, options ...MsgOption) (_scheduledMessageId string, err error) {
+	var (
+		req      *http.Request
+		parser   func(*chatResponseFull) responseParser
+		response chatResponseFull
+	)
+
+	if req, parser, err = buildSender(api.endpoint, options...).BuildRequestContext(ctx, api.token, channelID); err != nil {
+		return "", err
+	}
+
+	if api.Debug() {
+		reqBody, err := io.ReadAll(req.Body)
+		if err != nil {
+			return "", err
+		}
+		req.Body = io.NopCloser(bytes.NewBuffer(reqBody))
+		api.Debugf("Sending request: %s", string(reqBody))
+	}
+
+	if err = doPost(ctx, api.httpclient, req, parser(&response), api); err != nil {
+		return "", err
+	}
+
+	return response.ScheduledMessageID, response.Err()
+}
+
 // ScheduleMessage sends a message to a channel.
 // Message is escaped by default according to https://api.slack.com/docs/formatting
 // Use http://davestevens.github.io/slack-message-builder/ to help crafting your message.
-func (api *Client) ScheduleMessage(channelID, postAt string, options ...MsgOption) (string, string, error) {
-	return api.ScheduleMessageContext(context.Background(), channelID, postAt, options...)
+func (api *Client) ScheduleMessage(channelID, postAt string, options ...MsgOption) (string, error) {
+	//return api.ScheduleMessageContext(context.Background(), channelID, postAt, options...)
+	scheduledMsgId, err := api.SendScheduledMessageContext(
+		context.Background(),
+		channelID,
+		MsgOptionSchedule(postAt),
+		MsgOptionCompose(options...),
+	)
+	return scheduledMsgId, err
 }
 
 // ScheduleMessageContext sends a message to a channel with a custom context
