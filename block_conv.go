@@ -237,7 +237,6 @@ func (a *Accessory) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the Unmarshaller interface for Accessory, so that any JSON
 // unmarshalling is delegated and proper type determination can be made before unmarshal
-// Note: datetimepicker is not supported in Accessory
 func (a *Accessory) UnmarshalJSON(data []byte) error {
 	var r json.RawMessage
 
@@ -292,6 +291,12 @@ func (a *Accessory) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		a.TimePickerElement = element.(*TimePickerBlockElement)
+	case "datetimepicker":
+		element, err := unmarshalBlockElement(r, &DateTimePickerBlockElement{})
+		if err != nil {
+			return err
+		}
+		a.DateTimePickerElement = element.(*DateTimePickerBlockElement)
 	case "plain_text_input":
 		element, err := unmarshalBlockElement(r, &PlainTextInputBlockElement{})
 		if err != nil {
@@ -356,6 +361,9 @@ func toBlockElement(element *Accessory) BlockElement {
 	}
 	if element.TimePickerElement != nil {
 		return element.TimePickerElement
+	}
+	if element.DateTimePickerElement != nil {
+		return element.DateTimePickerElement
 	}
 	if element.PlainTextInputElement != nil {
 		return element.PlainTextInputElement
