@@ -72,6 +72,8 @@ func NewAccessory(element BlockElement) *Accessory {
 		return &Accessory{DatePickerElement: element.(*DatePickerBlockElement)}
 	case *TimePickerBlockElement:
 		return &Accessory{TimePickerElement: element.(*TimePickerBlockElement)}
+	case *DateTimePickerBlockElement:
+		return &Accessory{DateTimePickerElement: element.(*DateTimePickerBlockElement)}
 	case *PlainTextInputBlockElement:
 		return &Accessory{PlainTextInputElement: element.(*PlainTextInputBlockElement)}
 	case *RadioButtonsBlockElement:
