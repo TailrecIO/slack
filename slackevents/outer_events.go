@@ -4,6 +4,7 @@ package slackevents
 
 import (
 	"encoding/json"
+	"github.com/TailrecIO/slack"
 )
 
 // EventsAPIEvent is the base EventsAPIEvent
@@ -31,17 +32,19 @@ type ChallengeResponse struct {
 
 // EventsAPICallbackEvent is the main (outer) EventsAPI event.
 type EventsAPICallbackEvent struct {
-	Type         string           `json:"type"`
-	Token        string           `json:"token"`
-	TeamID       string           `json:"team_id"`
-	APIAppID     string           `json:"api_app_id"`
-	EnterpriseID string           `json:"enterprise_id"`
-	InnerEvent   *json.RawMessage `json:"event"`
-	AuthedUsers  []string         `json:"authed_users"`
-	AuthedTeams  []string         `json:"authed_teams"`
-	EventID      string           `json:"event_id"`
-	EventTime    int              `json:"event_time"`
-	EventContext string           `json:"event_context"`
+	Type               string                     `json:"type"`
+	Token              string                     `json:"token"`
+	TeamID             string                     `json:"team_id"`
+	APIAppID           string                     `json:"api_app_id"`
+	EnterpriseID       string                     `json:"enterprise_id"`
+	InnerEvent         *json.RawMessage           `json:"event"`
+	AuthedUsers        []string                   `json:"authed_users"`
+	AuthedTeams        []string                   `json:"authed_teams"`
+	EventID            string                     `json:"event_id"`
+	EventTime          int                        `json:"event_time"`
+	EventContext       string                     `json:"event_context"`
+	Authorizations     []slack.EventAuthorization `json:"authorizations"`
+	IsExtSharedChannel bool                       `json:"is_ext_shared_channel"`
 }
 
 // EventsAPIAppRateLimited indicates your app's event subscriptions are being rate limited
